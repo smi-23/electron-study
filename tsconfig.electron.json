@@ -11,5 +11,5 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
   },
-  "include": ["public/electron.ts"]
+  "include": ["public/electron.ts", "public/preload.ts"]
 }
