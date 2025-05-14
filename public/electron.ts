@@ -1,7 +1,11 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, ipcMain } from "electron";
 import * as isDev from "electron-is-dev";
 import path from "node:path";
 // import * as path from "path";
+
+ipcMain.handle("getOs", () => {
+  return process.platform;
+});
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -13,6 +17,8 @@ function createWindow() {
       preload: path.join(__dirname, "preload.js"),
     },
   });
+
+  win.webContents.openDevTools();
 
   win.loadURL(
     isDev
