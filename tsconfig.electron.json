@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "module": "CommonJS",
+    "outDir": "dist",
+    "rootDir": "public",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+  },
+  "include": ["public/electron.ts"]
+}
