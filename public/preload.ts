@@ -1,5 +1,7 @@
 import { contextBridge, ipcRenderer } from "electron";
 
-contextBridge.exposeInMainWorld('api', {
-    getPlatform: ()=>ipcRenderer.invoke('getOs')
+contextBridge.exposeInMainWorld('system', {
+    getPlatform: () => ipcRenderer.invoke('getOs'),
+    getVersions: () => ipcRenderer.invoke('system-versions')
+    
 })

@@ -1,12 +1,21 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 
+interface VersionInfo {
+  node: string;
+  chrome: string;
+}
+
 export default function App() {
   const [platform, setPlatform] = useState<string | null>(null);
+  const [versions, setVersions] = useState<VersionInfo | null>(null);
 
   useEffect(() => {
-    window.api.getPlatform().then((platform) => {
+    window.system.getPlatform().then((platform) => {
       setPlatform(platform)
+    });
+    window.system.getVersions().then((versions) => {
+      setVersions(versions);
     });
   }, []);
 
@@ -18,6 +27,14 @@ export default function App() {
         <div>
           <h1>os information</h1>
           <p>{platform}</p>
+        </div>
+      )}
+      {versions && (
+        <div>
+          <h1>version information</h1>
+          <p>
+            chrome: {versions.chrome}, node: { versions.node}
+          </p>
         </div>
       )}
     </>

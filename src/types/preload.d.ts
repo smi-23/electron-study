@@ -4,9 +4,14 @@ declare global {
   interface OsInfo {
     platform: string;
   }
+  interface VersionInfo {
+    chrome: string;
+    node: string;
+  }
   interface Window {
-      api: {
-        getPlatform: () => Promise<OsInfo['platform']>
+    system: {
+      getPlatform: () => Promise<OsInfo["platform"]>;
+      getVersions: () => Promise<VersionInfo>;
     };
   }
 }

@@ -7,6 +7,13 @@ ipcMain.handle("getOs", () => {
   return process.platform;
 });
 
+ipcMain.handle('system-versions', () => {
+    return {
+        node: process.versions.node,
+        chrome: process.versions.chrome
+    }
+})
+
 function createWindow() {
   const win = new BrowserWindow({
     width: 800,
