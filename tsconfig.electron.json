@@ -7,9 +7,9 @@
     "strict": true,
     "module": "CommonJS",
     "outDir": "dist",
-    "rootDir": "public",
+    "rootDir": "electron",
     "moduleResolution": "node",
     "resolveJsonModule": true,
   },
-  "include": ["public/electron.ts", "public/preload.ts"]
+  "include": ["electron/electron.ts", "electron/preload.ts"]
 }
