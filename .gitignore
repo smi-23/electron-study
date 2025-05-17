@@ -22,4 +22,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# tsc로 변환된 js파일
 /dist
+
+# .vscode
+/.vscode

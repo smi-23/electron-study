@@ -3,18 +3,7 @@ import * as isDev from "electron-is-dev";
 import path from "node:path";
 // import * as path from "path";
 
-ipcMain.handle("getOs", () => {
-  return process.platform;
-});
-
-ipcMain.handle('system-versions', () => {
-    return {
-        node: process.versions.node,
-        chrome: process.versions.chrome
-    }
-})
-
-function createWindow() {
+function createWindow(loadPath: string) {
   const win = new BrowserWindow({
     width: 800,
     height: 800,
@@ -29,11 +18,26 @@ function createWindow() {
 
   win.loadURL(
     isDev
-      ? "http://localhost:3000"
-      : `file://${path.join(__dirname, "../build/index.html")}`
+      ? `http://localhost:3000${loadPath}`
+      : `file://${path.join(__dirname, "../build/index.html")}${loadPath}`
   );
+
+  return win
 }
 
+let loginWindow: BrowserWindow | null = null
+let signupWindow: BrowserWindow | null = null
 app.whenReady().then(() => {
-  createWindow();
+  // createWindow();
+  loginWindow = createWindow("/")
 });
+
+ipcMain.on('ipc-open-window-signup', () => {
+  if (signupWindow && !signupWindow.isDestroyed()) {
+    signupWindow.focus(); // 이미 열려 있다면 포커스만
+    return;
+  }
+  signupWindow = createWindow("/signup")
+})
+
+// 내일은 db연결, 회원가입 로그인 관련 비즈니스 로직 완성하기 

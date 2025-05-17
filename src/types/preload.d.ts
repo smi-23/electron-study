@@ -13,5 +13,10 @@ declare global {
       getPlatform: () => Promise<OsInfo["platform"]>;
       getVersions: () => Promise<VersionInfo>;
     };
+    user: {
+      login: (username: string, password: string) => Promise<any>
+      signup: (username: string, password: string, passwordCheck: string) => Promise<any>
+      toSignup: () => void
+    }
   }
 }
