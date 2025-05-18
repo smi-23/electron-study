@@ -9,7 +9,7 @@ export default function Signup() {
   function signup() {
     try {
       const res = window.user.signup(username, password, passwordCheck);
-      console.log(res);
+      console.log(res, "message from renderer in signup compo");
     } catch (error) {
       console.log(error);
     }
