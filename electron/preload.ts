@@ -3,10 +3,10 @@ import { contextBridge, ipcRenderer } from "electron";
 
 /**
  * user
- * loginm signup
  */
 contextBridge.exposeInMainWorld('user', {
     login: (username: string, password: string) => ipcRenderer.invoke('ipc-login', { username, password }),
+    logout: () => ipcRenderer.send('ipc-logout'),
     signup: (username: string, password: string, passwordCheck: string) => ipcRenderer.invoke('ipc-signup', { username, password, passwordCheck }),
     toSignup: () => ipcRenderer.send('ipc-open-window-signup')
 })

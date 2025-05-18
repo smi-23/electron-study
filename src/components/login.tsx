@@ -19,8 +19,7 @@ export default function Login() {
   function toSingup() {
     // navigate('/signup');
     try {
-      const res = window.user.toSignup();
-      console.log(res);
+      window.user.toSignup();
     } catch (error) {
       console.error(error);
     }

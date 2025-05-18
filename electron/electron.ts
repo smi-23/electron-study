@@ -2,7 +2,8 @@ import { app, BrowserWindow, ipcMain } from "electron";
 import * as isDev from "electron-is-dev";
 import path from "node:path";
 import { createUserTbl, pool } from "./db";
-import {signup} from "./user/signup";
+import { signup } from "./user/signup";
+import { RowDataPacket } from "mysql2";
 // import * as path from "path";
 
 function createWindow(loadPath: string) {
@@ -29,6 +30,7 @@ function createWindow(loadPath: string) {
 
 let loginWindow: BrowserWindow | null = null
 let signupWindow: BrowserWindow | null = null
+let mainWindow: BrowserWindow | null = null
 
 app.whenReady().then(() => {
   // createWindow();
@@ -48,6 +50,9 @@ ipcMain.on('ipc-open-window-signup', () => {
   signupWindow = createWindow("/signup")
 })
 
+/**
+ * handle signup
+ */
 ipcMain.handle('ipc-signup', async (_, { username, password, passwordCheck }) => {
   const res = await signup(pool, username, password, passwordCheck)
   if (res.success) {
@@ -57,4 +62,50 @@ ipcMain.handle('ipc-signup', async (_, { username, password, passwordCheck }) =>
   }
 })
 
-// 내일은 db연결, 회원가입 로그인 관련 비즈니스 로직 완성하기
+/**
+ * handle login
+ */
+interface User extends RowDataPacket {
+  username: string;
+  password: string;
+}
+
+ipcMain.handle('ipc-login', async (_, { username, password }) => {
+  const connection = await pool.getConnection()
+  try {
+    const [rows] = await connection.execute<User[]>(`select username, password from users where username = ?`, [username])
+    
+    // check if user exists
+    if (!Array.isArray(rows) || rows.length === 0) {
+      console.log("user not found")
+      return { success: false }
+    }
+
+    // check password match
+    if(password !== rows[0].password) {
+      console.log('password incorrect')
+      return {success: false}
+    }
+
+    // open main window
+    loginWindow?.close()
+    loginWindow = null
+    mainWindow = createWindow('/main');
+
+    console.log('login has successed')
+    return {success: true}
+  } catch (error) {
+    console.error(error)
+  } finally {
+    connection.release()
+  }
+})
+
+/**
+ * logout
+ */
+ipcMain.on('ipc-logout', ()=>{
+  mainWindow?.close()
+  mainWindow = null
+  loginWindow = createWindow('/')
+})
