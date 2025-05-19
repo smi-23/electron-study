@@ -5,12 +5,15 @@ import { useState } from 'react';
 export default function Login() {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState(''); // 여기는 타입 추론
+  const [errorMsg, setErrorMsg] = useState('');
   // const navigate = useNavigate(); // 웹에서는 쓰는데 일렉트론에서 잠시 사용 중단
 
-  function login() {
+  async function login() {
     try {
-      const res = window.user.login(username, password);
-      console.log(res);
+      const res = await window.user.login(username, password);
+      if (!res.success) {
+        setErrorMsg(res.message);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -24,6 +27,7 @@ export default function Login() {
       console.error(error);
     }
   }
+  
   return (
     <Stack>
       <TextField
@@ -43,6 +47,7 @@ export default function Login() {
       <Button variant="text" onClick={login}>
         로그인
       </Button>
+      {errorMsg && <Typography color="red">{errorMsg}</Typography>}
       <Typography onClick={toSingup} sx={{ cursor: 'pointer', color: 'blue' }}>
         아직 회원이 아니신가요?
       </Typography>

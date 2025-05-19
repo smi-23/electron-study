@@ -15,7 +15,8 @@ declare global {
     };
     user: {
       login: (username: string, password: string) => Promise<any>
-      logout: () => void
+      logout: () => void,
+      toLogin: () => void,
       signup: (username: string, password: string, passwordCheck: string) => Promise<any>
       toSignup: () => void
     }

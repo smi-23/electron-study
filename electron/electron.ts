@@ -2,8 +2,8 @@ import { app, BrowserWindow, ipcMain } from "electron";
 import * as isDev from "electron-is-dev";
 import path from "node:path";
 import { createUserTbl, pool } from "./db";
-import { signup } from "./user/signup";
-import { RowDataPacket } from "mysql2";
+import signup from "./user/signup";
+import login from "./user/login";
 // import * as path from "path";
 
 function createWindow(loadPath: string) {
@@ -17,7 +17,7 @@ function createWindow(loadPath: string) {
     },
   });
 
-  win.webContents.openDevTools();
+  // win.webContents.openDevTools();
 
   win.loadURL(
     isDev
@@ -28,6 +28,9 @@ function createWindow(loadPath: string) {
   return win
 }
 
+/**
+ * windows
+ */
 let loginWindow: BrowserWindow | null = null
 let signupWindow: BrowserWindow | null = null
 let mainWindow: BrowserWindow | null = null
@@ -36,18 +39,29 @@ app.whenReady().then(() => {
   // createWindow();
   createUserTbl();
   loginWindow = createWindow("/")
-  // signup(pool)
 });
 
 /**
  * open signup window
  */
-ipcMain.on('ipc-open-window-signup', () => {
+ipcMain.on('ipc-open-signup-window', () => {
   if (signupWindow && !signupWindow.isDestroyed()) {
     signupWindow.focus(); // 이미 열려 있다면 포커스만
     return;
   }
-  signupWindow = createWindow("/signup")
+  signupWindow = createWindow('/signup')
+})
+
+/**
+ * to login window && close signup window
+ */
+ipcMain.on('ipc-to-login-window', () => {
+  // 중복 코드니까 다음에 sub, util 만들어서 모듈화/분리
+  if(signupWindow && !signupWindow.isDestroyed()) {
+    signupWindow.close()
+  }
+  signupWindow = null
+  loginWindow?.focus()
 })
 
 /**
@@ -55,57 +69,42 @@ ipcMain.on('ipc-open-window-signup', () => {
  */
 ipcMain.handle('ipc-signup', async (_, { username, password, passwordCheck }) => {
   const res = await signup(pool, username, password, passwordCheck)
+  
+  // close signup window && focus login window
   if (res.success) {
-    signupWindow?.close();
-    loginWindow?.focus();
+    if (signupWindow && !signupWindow.isDestroyed()) {
+      signupWindow.close()
+    }
     signupWindow = null
+    loginWindow?.focus()
   }
+  return res;
 })
 
 /**
  * handle login
  */
-interface User extends RowDataPacket {
-  username: string;
-  password: string;
-}
-
 ipcMain.handle('ipc-login', async (_, { username, password }) => {
-  const connection = await pool.getConnection()
-  try {
-    const [rows] = await connection.execute<User[]>(`select username, password from users where username = ?`, [username])
-    
-    // check if user exists
-    if (!Array.isArray(rows) || rows.length === 0) {
-      console.log("user not found")
-      return { success: false }
-    }
+  const res = await login(username, password)
 
-    // check password match
-    if(password !== rows[0].password) {
-      console.log('password incorrect')
-      return {success: false}
+  // open main window
+  if (res.success) {
+    if (loginWindow && !loginWindow.isDestroyed()) {
+      loginWindow.close()
     }
-
-    // open main window
-    loginWindow?.close()
     loginWindow = null
     mainWindow = createWindow('/main');
-
-    console.log('login has successed')
-    return {success: true}
-  } catch (error) {
-    console.error(error)
-  } finally {
-    connection.release()
   }
+  return res;
 })
 
 /**
  * logout
  */
-ipcMain.on('ipc-logout', ()=>{
-  mainWindow?.close()
+ipcMain.on('ipc-logout', () => {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.close()
+  }
   mainWindow = null
   loginWindow = createWindow('/')
 })
