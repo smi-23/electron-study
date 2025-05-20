@@ -14,6 +14,8 @@ export default function Login() {
       if (!res.success) {
         setErrorMsg(res.message);
       }
+      console.log(res); // temp 확인용
+      localStorage.setItem('user_info', JSON.stringify(res.user_info))
     } catch (error) {
       console.error(error);
     }
@@ -27,7 +29,7 @@ export default function Login() {
       console.error(error);
     }
   }
-  
+
   return (
     <Stack>
       <TextField

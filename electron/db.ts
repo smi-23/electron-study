@@ -12,6 +12,10 @@ export const pool = mysql.createPool({
   database: process.env.DB_NAME,
 });
 
+/**
+ * create users table
+ */
+
 export async function createUserTbl() {
   const connection = await pool.getConnection()
   try {
@@ -26,7 +30,29 @@ export async function createUserTbl() {
     console.log('create users tbl')
   } catch (error) {
     console.error(error)
-  }finally{
+  } finally {
     connection.release()
+  }
+}
+
+/**
+ * create posts table
+ */
+export async function createPostTbl() {
+  const connection = await pool.getConnection();
+  try {
+    await connection.execute(
+      `CREATE TABLE IF NOT EXISTS posts (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        author VARCHAR(100) NOT NULL,
+        title VARCHAR(255) NOT NULL,
+        content TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        modified_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        user_id INT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      );`)
+  } catch (error) {
+    console.error(error)
   }
 }

@@ -8,7 +8,7 @@ interface User extends RowDataPacket {
 export default async function login(username: string, password: string) {
   const connection = await pool.getConnection()
   try {
-    const [rows] = await connection.execute<User[]>(`select username, password from users where username = ?`, [username])
+    const [rows] = await connection.execute<User[]>(`select id, username, password from users where username = ?`, [username])
 
     // check if user exists
     if (!Array.isArray(rows) || rows.length === 0) {
@@ -23,7 +23,8 @@ export default async function login(username: string, password: string) {
     }
 
     console.log('login success')
-    return { success: true }
+    const user = rows[0]
+    return { success: true, user_info: { user_id: user.id, username: user.username } }
   } catch (error) {
     console.error(error)
     return { success: false, message: '로그인 중 에러가 발생했습니다.' }

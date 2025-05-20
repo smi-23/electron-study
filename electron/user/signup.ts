@@ -24,6 +24,7 @@ export default async function signup(pool: Pool, username: string, password: str
         insert into users (username, password) value (?, ?)
         `,
       [username, password])
+    console.log('signup success')
     return { success: true }
   } catch (error) {
     console.error(error)

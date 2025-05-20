@@ -1,7 +1,7 @@
 import { app, BrowserWindow, ipcMain } from "electron";
 import * as isDev from "electron-is-dev";
 import path from "node:path";
-import { createUserTbl, pool } from "./db";
+import { createPostTbl, createUserTbl, pool } from "./db";
 import signup from "./user/signup";
 import login from "./user/login";
 // import * as path from "path";
@@ -38,6 +38,7 @@ let mainWindow: BrowserWindow | null = null
 app.whenReady().then(() => {
   // createWindow();
   createUserTbl();
+  createPostTbl();
   loginWindow = createWindow("/")
 });
 
@@ -108,3 +109,5 @@ ipcMain.on('ipc-logout', () => {
   mainWindow = null
   loginWindow = createWindow('/')
 })
+
+// 할일 => 게시판 테이블 생성 및 crud 구현, 윈도우 옵션 커스텀 할 수 있게 만들기
