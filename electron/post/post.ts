@@ -35,13 +35,11 @@ export async function getAllPost() {
   const connection = await pool.getConnection()
   try {
     const [rows] = await connection.execute(`select id, author, title, content, created_at from posts`)
-    
-    // 게시글이 0개인 경우 프론트에서 백에서 어떻게 처리할지 고민하기
-    if(rows.length === 0) {
-      console.log("posts do not exist")
-      return {success: }
+    console.log("all posts fetched");
+    const posts = rows
+    return {success: true, posts}
     }
-  } catch (error) {
+  catch (error) {
     console.error(error)
     return { success: false, message: "전체 게시글 조회 중 에러가 발생했습니다." }
   }

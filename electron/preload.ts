@@ -11,3 +11,12 @@ contextBridge.exposeInMainWorld('user', {
     signup: (username: string, password: string, passwordCheck: string) => ipcRenderer.invoke('ipc-signup', { username, password, passwordCheck }),
     toSignup: () => ipcRenderer.send('ipc-open-signup-window')
 })
+
+/**
+ * post
+ */
+contextBridge.exposeInMainWorld('post', {
+    createPost: (user_id: string, username: string, title: string, content: string) => ipcRenderer.invoke('ipc-create-post', { user_id, username, title, content }
+    ),
+    getAllPosts: () => ipcRenderer.invoke('ipc-get-all-posts')
+})
