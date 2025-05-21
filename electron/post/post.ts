@@ -27,6 +27,10 @@ export async function createPost(user_id: string, username: string, title: strin
   }
 }
 
+/**
+ * 
+ * @returns 
+ */
 export async function getAllPost() {
   const connection = await pool.getConnection()
   try {
