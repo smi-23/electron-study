@@ -1,14 +1,10 @@
 import { RowDataPacket } from "mysql2";
 import { pool } from "../db"
-interface User extends RowDataPacket {
-  username: string;
-  password: string;
-}
 
 export default async function login(username: string, password: string) {
   const connection = await pool.getConnection()
   try {
-    const [rows] = await connection.execute<User[]>(`select id, username, password from users where username = ?`, [username])
+    const [rows] = await connection.execute<RowDataPacket[]>(`select id, username, password from users where username = ?`, [username])
 
     // check if user exists
     if (!Array.isArray(rows) || rows.length === 0) {

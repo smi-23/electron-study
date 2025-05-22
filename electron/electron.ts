@@ -4,6 +4,7 @@ import path from "node:path";
 import { createPostTbl, createUserTbl, pool } from "./db";
 import signup from "./user/signup";
 import login from "./user/login";
+import { createPost, getAllPosts } from "./post/post";
 // import * as path from "path";
 
 function createWindow(loadPath: string) {
@@ -17,7 +18,7 @@ function createWindow(loadPath: string) {
     },
   });
 
-  // win.webContents.openDevTools();
+  win.webContents.openDevTools();
 
   win.loadURL(
     isDev
@@ -110,4 +111,23 @@ ipcMain.on('ipc-logout', () => {
   loginWindow = createWindow('/')
 })
 
-// 할일 => 게시판 테이블 생성 및 crud 구현, 윈도우 옵션 커스텀 할 수 있게 만들기
+
+/**
+ * create post
+ */
+ipcMain.handle('ipc-create-post', async (_, user_id, username, title, content) =>{
+  const res = await createPost(user_id, username, title, content)
+  // 성공하면 최신화
+  if(res.success) {
+    
+  }
+})
+
+/**
+* get all posts
+*/
+ipcMain.handle('ipc-get-all-posts', async () => {
+  const res = await getAllPosts()
+  return res;
+})
+// 글 쓰기 했을 때 로컬스토리지에서 유저인포 못 찾는 에러 고쳐야 함

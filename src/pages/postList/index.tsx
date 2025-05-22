@@ -1,4 +1,5 @@
-import { Container, Typography } from "@mui/material";
+import { Container, Typography } from '@mui/material';
+import PostList from '../../components/PostList';
 
 export default function PostListPage() {
   return (
@@ -6,7 +7,7 @@ export default function PostListPage() {
       <Typography variant="h4" gutterBottom>
         게시파 리스트
       </Typography>
-      
+      <PostList />
     </Container>
   );
 }

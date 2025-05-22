@@ -1,3 +1,4 @@
+import { RowDataPacket } from "mysql2";
 import { pool } from "../db";
 
 /**
@@ -31,14 +32,16 @@ export async function createPost(user_id: string, username: string, title: strin
  * 
  * @returns 
  */
-export async function getAllPost() {
+export async function getAllPosts() {
   const connection = await pool.getConnection()
   try {
-    const [rows] = await connection.execute(`select id, author, title, content, created_at from posts`)
-    console.log("all posts fetched");
-    const posts = rows
-    return {success: true, posts}
+    const [rows] = await connection.execute<RowDataPacket[]>(`select id, author, title, content, created_at from posts`)
+    if (rows.length === 0) {
+      console.log('no post found')
     }
+    console.log("all posts fetched");
+    return { success: true, posts: rows }
+  }
   catch (error) {
     console.error(error)
     return { success: false, message: "전체 게시글 조회 중 에러가 발생했습니다." }
